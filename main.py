@@ -7,7 +7,12 @@ app = FastAPI()
 
 app.include_router(router)
 
+@app.get('/')
+def index():
+    return {'mensagem': 'página existindo!'}
+
 
 if __name__ == '__main__':
     engine_handler()
+    print('Banco resetado!')
     

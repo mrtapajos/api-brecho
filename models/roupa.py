@@ -8,4 +8,4 @@ class Roupa(ormar.Model):
 
     id = ormar.Integer(primary_key=True)
     descricao = ormar.String(max_length=50)
-    vendedor = ormar.ForeignKey(Usuario)
+    vendedor = ormar.ForeignKey(Usuario, back_populates=False)
