@@ -14,12 +14,15 @@ def index():
     return {'mensagem': 'página existindo!'}
 
 @app.post("/login")
-async def login(user: UserCreate):
-    authenticated_user = await authenticate_user(user.username, user.senha)
+async def login(username: str, senha: str):
+    authenticated_user = await authenticate_user(username, senha)
     if not authenticated_user:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
-    access_token = await generate_access_token(user.username)
-    return {'access token': access_token, 'token type': 'bearer'}
+        raise HTTPException(status_code=401, detail="Nome de usuário ou senha inválido!")
+    access_token = await generate_access_token(username)
+    
+    return [
+        {'access token': access_token, 'token type': 'bearer'},
+        {'mensagem': 'usuário acessado com sucesso!'}]
 
 
 if __name__ == '__main__':
