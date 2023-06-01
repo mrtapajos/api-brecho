@@ -1,39 +1,18 @@
-# from main import app    
-from fastapi import HTTPException
-from fastapi.security import OAuth2PasswordBearer, HTTPBearer
-from models import Usuario, UserCreate
-from controllers.usuario_endpoints import pwd_context
+from fastapi.security import OAuth2PasswordBearer
 from JWT.config import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
+from passlib.context import CryptContext
 
 from datetime import datetime, timedelta
-from jose import jwt, JWTError
-from database.db_config import database
+from jose import jwt
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/login')
+pwd_context = CryptContext(schemes=['bcrypt'])
 
-
-# AUTENTICAÇÃO
-async def authenticate_user(username: str, senha: str):
-    user = await Usuario.objects.get(username=username)
-    if not user:
-        return False
-    if not pwd_context.verify(senha, user.senha):
-        return False
-    return user
-
-
-# CRIAR TOKEN
-# async def create_access_token(data: dict, expire_delta: timedelta):
-#     to_encode = data.copy()
-#     expire = datetime.utcnow() + expire_delta
-#     to_encode.update({"exp": expire})
-#     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-#     return encoded_jwt
 
 
 # GERAR TOKEN
-async def generate_access_token(username: str):
+async def generate_access_token(username: str) -> str:
 
     # DEFININDO VALIDADE
     expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES) 

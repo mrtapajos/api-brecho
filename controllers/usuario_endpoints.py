@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from http import HTTPStatus
+from fastapi import APIRouter, HTTPException
 from models.usuario import Usuario
-from passlib.context import CryptContext
+from JWT import pwd_context, generate_access_token, authenticate_user
 from models.usuario import UserCreate
 
 router = APIRouter()
@@ -9,7 +10,7 @@ router = APIRouter()
 async def read_users():
     return await Usuario.objects.all()
     
-pwd_context = CryptContext(schemes=['bcrypt'])
+
 
 @router.post('/register', response_model=Usuario)
 async def register(user: UserCreate) -> Usuario:
@@ -17,7 +18,18 @@ async def register(user: UserCreate) -> Usuario:
     new_user = Usuario(
         username=user.username,
         senha=hashed_password,
-        livros=user.livros,
         papel=user.papel)
     await new_user.save()
     return new_user
+
+
+@router.post("/login")
+async def login(username: str, senha: str):
+    authenticated_user = await authenticate_user(username, senha)
+    if not authenticated_user:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Nome de usuário ou senha inválido!")
+    access_token = await generate_access_token(username)
+    
+    return [
+        {'access token': access_token, 'token type': 'bearer'},
+        {'mensagem': 'usuário acessado com sucesso!'}]
