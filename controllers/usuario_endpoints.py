@@ -11,7 +11,6 @@ async def read_users():
     return await Usuario.objects.all()
     
 
-
 @router.post('/register', response_model=Usuario)
 async def register(user: UserCreate) -> Usuario:
     hashed_password = pwd_context.hash(user.senha)
