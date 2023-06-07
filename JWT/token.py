@@ -1,14 +1,14 @@
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from models import Usuario, UserCreate
-from controllers.usuario_endpoints import pwd_context
+from models import Usuario
 from JWT.config import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
 from datetime import datetime, timedelta
 from jose import jwt, ExpiredSignatureError
 from jwt import InvalidTokenError
-
+from passlib.context import CryptContext
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/login')
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 # AUTENTICAÇÃO

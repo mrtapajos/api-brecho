@@ -14,7 +14,10 @@ async def read_roupas():
 
 @router.post('/')
 async def create_roupa(roupa: RoupaCreate, token: str = Header(...)):
-    user = await verify_token(token)
+    user: Usuario = await verify_token(token)
+    # CERTIFICAR QUE O USUARIO É UM VENDEDOR
+    if user.papel != 'vendedor':
+        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='usuário deve ter o papel de vendedor!')
 
     if not user:
         raise HTTPException(HTTPStatus.BAD_REQUEST, detail='Invalid username or password!')
