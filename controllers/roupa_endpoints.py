@@ -1,6 +1,6 @@
 from http import HTTPStatus
-from fastapi import APIRouter, Header, HTTPException, Depends
-from JWT import get_current_user, authenticate_user, verify_token
+from fastapi import APIRouter, Header, HTTPException
+from JWT import verify_token
 from models.roupa import RoupaCreate
 from models import Usuario, Roupa
 
@@ -15,6 +15,7 @@ async def read_roupas():
 @router.post('/')
 async def create_roupa(roupa: RoupaCreate, token: str = Header(...)):
     user: Usuario = await verify_token(token)
+
     # CERTIFICAR QUE O USUARIO É UM VENDEDOR
     if user.papel != 'vendedor':
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='usuário deve ter o papel de vendedor!')

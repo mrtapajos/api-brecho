@@ -1,3 +1,4 @@
+from ormar.exceptions import NoMatch
 from http import HTTPStatus
 from fastapi import APIRouter, HTTPException
 from models.usuario import Usuario
@@ -10,6 +11,7 @@ router = APIRouter()
 async def read_users():
     return await Usuario.objects.all()
     
+
 @router.post('/register', response_model=Usuario)
 async def register(user: UserCreate):
     if user.papel != 'vendedor' and user.papel != 'cliente':
@@ -20,7 +22,7 @@ async def register(user: UserCreate):
         senha=hashed_password,
         papel=user.papel)
     await new_user.save()
-    return new_user
+    return {'mensagem': "usuário registrado com sucesso!"}
 
 
 @router.post("/login")
@@ -34,10 +36,11 @@ async def login(username: str, senha: str):
         {'access token': access_token, 'token type': 'bearer'},
         {'mensagem': 'usuário acessado com sucesso!'}]
 
+
 @router.delete('/')
-async def delete_usuario(usuario_id: int):
-    usuario = await Usuario.objects.get(id=usuario_id)
-    """ if not usuario:
-        raise NoMatch('usuário não encontrado!')  """
+async def delete_usuario(user_id: int):
+    usuario = await Usuario.objects.get(id=user_id)
+    if not usuario:
+        raise NoMatch('usuário não encontrado!') 
     await usuario.delete()
     return {'mensagem': 'usuário deletado com sucesso!'}

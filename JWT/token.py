@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from models import Usuario
@@ -42,15 +43,12 @@ async def verify_token(token: str) -> Usuario:
         if not username:
             raise HTTPException(status_code=401, detail='Invalid token')
         
-        # Perform any additional validation or retrieval of user data based on the token
-        # For example, you can retrieve the user from the database based on the username
-        
         user =  await Usuario.get_by_username(username)
         if not user:
-            raise HTTPException(status_code=401, detail='Invalid user')
+            raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Invalid user')
         
         return user
     except ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail='Token has expired')
+        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='Token has expired')
     except InvalidTokenError:
-        raise HTTPException(status_code=401, detail='Invalid token')
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Invalid token')

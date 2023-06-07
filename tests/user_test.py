@@ -11,4 +11,4 @@ async def test_register_user():
     new_user: dict = create_valid_user()
     response  = client.post('/user/register', json=new_user)
     assert response.status_code == HTTPStatus.OK
-    assert response.json()['username'] == new_user['username']
+    assert response.json() == {'mensagem': "usuário registrado com sucesso!"}
